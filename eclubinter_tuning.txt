@@ -1,0 +1,307 @@
+ 43          CURRENT_POLICIES CP
+ 44          INNER JOIN ENDPOLICY ALL_END_POL ON CP.STRUCTURAL_END_TID = ALL_END_POL.TECHNICALIDENTIFIER
+ 45          INNER JOIN ENDPOLICY FULL_6601_END_POL ON (FULL_6601_END_POL.TECHNICALIDENTIFIER = COALESCE(ALL_END_POL.FULL_PREVIOUS_TID, ALL_END_POL.TECHNICALIDENTIFIER ))
+ 46          LEFT OUTER JOIN ENDPOLICY_CF ECF ON(ECF.PARENT_OID=FULL_6601_END_POL.TECHNICALIDENTIFIER)
+ 47          LEFT OUTER JOIN ENDPOLICY_PRODUCTPAR ENDPAR ON (ENDPAR.PARENT_OID = FULL_6601_END_POL.TECHNICALIDENTIFIER)
+ 48          LEFT OUTER JOIN PRODUCT P ON (P.TECHNICALIDENTIFIER = FULL_6601_END_POL.POL_PRODUCT_TID)
+ 49          LEFT OUTER JOIN CURRENCY C ON C.TECHNICALIDENTIFIER = FULL_6601_END_POL.POL_CURRENCY_TID
+ 50          LEFT OUTER JOIN (RoleToRoleTarget RT INNER JOIN RolePayer RP On RP.TECHNICALIDENTIFIER = RT.Role_TID)
+ 51                  ON RT.Role_Target_TID = CP.POL_POLICY_SID
+ 52          LEFT OUTER JOIN POL_SIGN_DATE PSD ON PSD.POL_NUMBER = CP.POL_NUMBER
+ 53          LEFT OUTER JOIN PAYSTAT ON CP.POL_POLICY_SID = PAYSTAT.POLICY_TID
+ 54          LEFT OUTER JOIN POLICY_EVAL ON CP.POL_NUMBER = POLICY_EVAL.IDPOLICE
+ 55          LEFT OUTER JOIN ENDPOLICY_INDEXSETTING EI ON EI.parent_OID = FULL_6601_END_POL.TECHNICALIDENTIFIER
+ 56          LEFT OUTER JOIN CLASSESRESULTAT CR ON CR.ID_POLICE = FULL_6601_END_POL.TECHNICALIDENTIFIER
+ 57          LEFT OUTER JOIN ENDCOVERAGE ON (ENDCOVERAGE.EndorsedPolicy_TID = CP.STRUCTURAL_END_TID and InvCov_InvestmentStrategy_TID is not null)
+ 58          LEFT OUTER JOIN INVSTRAT ON (ENDCOVERAGE.InvCov_InvestmentStrategy_TID = INVSTRAT.TECHNICALIDENTIFIER)
+ 59          LEFT OUTER JOIN INVSTRATDEF ID ON (InvestStrategyDefinition_TID = ID.TECHNICALIDENTIFIER )
+ 60          LEFT OUTER JOIN ROLETOROLETARGET RT2 ON (RT2.ROLE_TARGET_TID = FULL_6601_END_POL.TECHNICALIDENTIFIER)
+ 61          LEFT OUTER JOIN BROKER ON (BROKER.TECHNICALIDENTIFIER = RT2.ROLE_TID)
+ 62          LEFT OUTER JOIN DISTRIBUTIONNETWORK_STRUCT ON (DISTRIBUTIONNETWORK_STRUCT.DISTRIBUTIONPARTNER_TID = BROKER.TECHNICALIDENTIFIER)
+ 63          LEFT OUTER JOIN DISTRIBUTIONNETWORK ON (DISTRIBUTIONNETWORK.TECHNICALIDENTIFIER = DISTRIBUTIONNETWORK_STRUCT.PARENT_OID)
+ 64          LEFT OUTER JOIN  DISTRIBUTIONNETWORK_PRODUCT ON (DISTRIBUTIONNETWORK_PRODUCT.PARENT_OID = DISTRIBUTIONNETWORK.TECHNICALIDENTIFIER
+ 65                          AND DISTRIBUTIONNETWORK_PRODUCT.PRODUCT_TID = P.TECHNICALIDENTIFIER)
+ 66          LEFT OUTER JOIN MAX_DATE ON CP.POL_POLICY_SID = MAX_DATE.TECH_ID_POL
+ 67          LEFT OUTER JOIN TAXFRAMEWORK TaxFwk ON FULL_6601_END_POL.TaxFramework_TID = TaxFwk.TECHNICALIDENTIFIER
+ 68          LEFT OUTER JOIN TAXCALCHIST ON TAXCALCHIST.Owner_TID = FULL_6601_END_POL.technicalidentifier
+ 69          LEFT OUTER JOIN TAXCALCHIST_PAR ON TAXCALCHIST_PAR.Parent_OID = TAXCALCHIST.technicalidentifier
+ 70  WHERE ALL_END_POL.End_Internal_Nbr IS NOT NULL;
+^C
+C:\Users\bip1\tune-master>sqlplus bip[solife_it0_ods_curver]/Koek1081@orlsol08
+
+SQL*Plus: Release 12.1.0.2.0 Production on Mar. Mai 29 08:43:33 2018
+
+Copyright (c) 1982, 2017, Oracle.  All rights reserved.
+
+Heure de la derniÞre connexion rÚussie : Mar. Mai   29 2018 08:24:46 +02:00
+
+ConnectÚ Ó :
+Oracle Database 12c Enterprise Edition Release 12.1.0.2.0 - 64bit Production
+With the Partitioning, OLAP, Advanced Analytics and Real Application Testing options
+
+SQL> set echo on
+SQL> variable sts_task datatype varchar2(30);
+Syntaxe : VAR[IABLE] [ <variable> [ NUMBER | CHAR | CHAR (n [CHAR|BYTE]) |
+                    VARCHAR2 (n [CHAR|BYTE]) | NCHAR | NCHAR (n) |
+                    NVARCHAR2 (n) | CLOB | NCLOB | BLOB | BFILE
+                    REFCURSOR | BINARY_FLOAT | BINARY_DOUBLE ] ]
+SQL>
+SQL> set serveroutput on
+SQL> declare
+  2  sts_task VARCHAR2(64);
+  3  BEGIN
+  4    -- Create a tuning task, sort on elapsed time
+  5    sts_task := DBMS_SQLTUNE.CREATE_TUNING_TASK( sql_id => 'ba9uxvnyqzn89'
+  6                                                ,plan_hash_value => '1030738185'
+  7                                                ,time_limit => 1800
+  8                                                                                       ,scope => DBMS_SQLTUNE.scope_comprehensive
+  9                                                ,description => 'tune query on orlsol00');
+ 10
+ 11    DBMS_SQLTUNE.EXECUTE_TUNING_TASK( task_name => sts_task );
+ 12    dbms_Output.put_line(sts_task);
+ 13  end;
+ 14  /
+declare
+*
+ERREUR Ó la ligne 1 :
+ORA-13616: Le privilÞge ADVISOR n'a pas ÚtÚ accordÚ Ó l'utilisateur
+SOLIFE_IT0_ODS_CURVER en cours.
+ORA-06512: Ó "SYS.DBMS_SYS_ERROR", ligne 86
+ORA-06512: Ó "SYS.DBMS_ADVISOR", ligne 941
+ORA-06512: Ó "SYS.DBMS_SQLTUNE", ligne 599
+ORA-06512: Ó ligne 5
+
+
+SQL> -- Task name
+SQL> print sts_task
+SP2-0552: Variable attachÚe "STS_TASK" non dÚclarÚe.
+SQL>
+SQL> select :sts_task from dual;
+SP2-0552: Variable attachÚe "STS_TASK" non dÚclarÚe.
+SQL>
+SQL> set serveroutput on
+SQL> variable sts_task datatype varchar2(30);
+Syntaxe : VAR[IABLE] [ <variable> [ NUMBER | CHAR | CHAR (n [CHAR|BYTE]) |
+                    VARCHAR2 (n [CHAR|BYTE]) | NCHAR | NCHAR (n) |
+                    NVARCHAR2 (n) | CLOB | NCLOB | BLOB | BFILE
+                    REFCURSOR | BINARY_FLOAT | BINARY_DOUBLE ] ]
+SQL> variable sts_task datatype varchar2(30)
+Syntaxe : VAR[IABLE] [ <variable> [ NUMBER | CHAR | CHAR (n [CHAR|BYTE]) |
+                    VARCHAR2 (n [CHAR|BYTE]) | NCHAR | NCHAR (n) |
+                    NVARCHAR2 (n) | CLOB | NCLOB | BLOB | BFILE
+                    REFCURSOR | BINARY_FLOAT | BINARY_DOUBLE ] ]
+SQL> declare
+  2  sts_task VARCHAR2(64);
+  3  BEGIN
+  4    -- Create a tuning task, sort on elapsed time
+  5    sts_task := DBMS_SQLTUNE.CREATE_TUNING_TASK( sql_id => 'ba9uxvnyqzn89'
+  6                                                ,plan_hash_value => '1030738185'
+  7                                                ,time_limit => 1800
+  8                                                                                       ,scope => DBMS_SQLTUNE.scope_comprehensive
+  9                                                ,description => 'tune query on orlsol00');
+ 10
+ 11    DBMS_SQLTUNE.EXECUTE_TUNING_TASK( task_name => sts_task );
+ 12    dbms_Output.put_line(sts_task);
+ 13  end;
+ 14  /
+declare
+*
+ERREUR Ó la ligne 1 :
+ORA-13616: Le privilÞge ADVISOR n'a pas ÚtÚ accordÚ Ó l'utilisateur
+SOLIFE_IT0_ODS_CURVER en cours.
+ORA-06512: Ó "SYS.DBMS_SYS_ERROR", ligne 86
+ORA-06512: Ó "SYS.DBMS_ADVISOR", ligne 941
+ORA-06512: Ó "SYS.DBMS_SQLTUNE", ligne 599
+ORA-06512: Ó ligne 5
+
+
+SQL> exit
+DÚconnectÚ de Oracle Database 12c Enterprise Edition Release 12.1.0.2.0 - 64bit Production
+With the Partitioning, OLAP, Advanced Analytics and Real Application Testing options
+
+C:\Users\bip1\tune-master>sqlplus bip@orlsol08
+
+SQL*Plus: Release 12.1.0.2.0 Production on Mar. Mai 29 08:47:30 2018
+
+Copyright (c) 1982, 2017, Oracle.  All rights reserved.
+
+Entrez le mot de passe :
+ERROR:
+ORA-01017: invalid username/password; logon denied
+
+
+Entrez le nom utilisateur : ^C
+C:\Users\bip1\tune-master>
+C:\Users\bip1\tune-master>sqlplus bip/Koek1081@orlsol08
+
+SQL*Plus: Release 12.1.0.2.0 Production on Mar. Mai 29 08:47:57 2018
+
+Copyright (c) 1982, 2017, Oracle.  All rights reserved.
+
+Heure de la derniÞre connexion rÚussie : Mar. Mai   29 2018 08:16:26 +02:00
+
+ConnectÚ Ó :
+Oracle Database 12c Enterprise Edition Release 12.1.0.2.0 - 64bit Production
+With the Partitioning, OLAP, Advanced Analytics and Real Application Testing options
+
+SQL> set timing on
+SQL> set serveroutput on
+SQL> declare
+  2  sts_task VARCHAR2(64);
+  3  BEGIN
+  4    -- Create a tuning task, sort on elapsed time
+  5    sts_task := DBMS_SQLTUNE.CREATE_TUNING_TASK( sql_id => 'ba9uxvnyqzn89'
+  6                                                ,plan_hash_value => '1030738185'
+  7                                                ,time_limit => 1800
+  8                                                                                       ,scope => DBMS_SQLTUNE.scope_comprehensive
+  9                                                ,description => 'tune query on orlsol00');
+ 10
+ 11    DBMS_SQLTUNE.EXECUTE_TUNING_TASK( task_name => sts_task );
+ 12    dbms_Output.put_line(sts_task);
+ 13  end;
+ 14  /
+declare
+*
+ERREUR Ó la ligne 1 :
+ORA-13780: L'instruction SQL n'existe pas.
+ORA-06512: Ó "SYS.DBMS_SYS_ERROR", ligne 79
+ORA-06512: Ó "SYS.PRVT_SQLADV_INFRA", ligne 268
+ORA-06512: Ó "SYS.DBMS_SQLTUNE", ligne 606
+ORA-06512: Ó ligne 5
+
+
+EcoulÚ : 00 :00 :00.10
+SQL> set echo on
+SQL> @eclubinter_tuning
+SQL> variable stmt_task VARCHAR2(64);
+SQL>
+SQL>  -- Create a tuning task for a sql_id
+SQL> exec  stmt_task := DBMS_SQLTUNE.CREATE_TUNING_TASK( sql_id => 'ba9uxvnyqzn89'
+BEGIN stmt_task := DBMS_SQLTUNE.CREATE_TUNING_TASK( sql_id => 'ba9uxvnyqzn89'; END;
+
+                                                                             *
+ERREUR Ó la ligne 1 :
+ORA-06550: Ligne 1, colonne 78 :
+PLS-00103: Encountered the symbol ";" when expecting one of the following:
+) , * & = - + < / > at in is mod remainder not rem
+<exposant (**)> <> or != or ~= >= <= <> and or like like2
+like4 likec between || multiset member submultiset
+The symbol ")" was substituted for ";" to continue.
+
+
+EcoulÚ : 00 :00 :00.02
+SQL>                                                    ,time_limit => 1800
+SP2-0734: commande inconnue au dÚbut de ",time_limi..." - le reste de la ligne est ignorÚ.
+SQL>                                                                                                ,scope => DBMS_SQLTUNE.scope_comprehensive
+SP2-0734: commande inconnue au dÚbut de ",scope => ..." - le reste de la ligne est ignorÚ.
+SQL>                                                                                                ,task_name=>'eclubinter'
+SP2-0734: commande inconnue au dÚbut de ",task_name..." - le reste de la ligne est ignorÚ.
+SQL>                                                    ,description => 'tune query on orlsol08');
+SP2-0734: commande inconnue au dÚbut de ",descripti..." - le reste de la ligne est ignorÚ.
+SP2-0044: Pour la liste des commandes connues entrez HELP
+and et pour sortir EXIT.
+SQL>
+SQL>
+SQL> select :stmt_task from dual;
+
+:STMT_TASK
+--------------------------------------------------------------------------------
+
+
+EcoulÚ : 00 :00 :00.00
+SQL> set serveroutput on
+SQL> @eclubinter_tuning
+SQL> variable stmt_task VARCHAR2(64);
+SQL>
+SQL>  -- Create a tuning task for a sql_id
+SQL> exec  stmt_task := DBMS_SQLTUNE.CREATE_TUNING_TASK( sql_id => 'ba9uxvnyqzn89',time_limit => 1800, scope => DBMS_SQLTUNE.scope_comprehensive, task_name=>'eclubinter');
+BEGIN stmt_task := DBMS_SQLTUNE.CREATE_TUNING_TASK( sql_id => 'ba9uxvnyqzn89',time_limit => 1800, scope => DBMS_SQLTUNE.scope_comprehensive, task_name=>'eclubinter'); END;
+
+      *
+ERREUR Ó la ligne 1 :
+ORA-06550: Ligne 1, colonne 7 :
+PLS-00201: identifier 'STMT_TASK' must be declared
+ORA-06550: Ligne 1, colonne 7 :
+PL/SQL: Statement ignored
+
+
+EcoulÚ : 00 :00 :00.01
+SQL>
+SQL> select :stmt_task from dual;
+
+:STMT_TASK
+--------------------------------------------------------------------------------
+
+
+EcoulÚ : 00 :00 :00.00
+SQL> @eclubinter_tuning
+SQL> variable stmt_task VARCHAR2(64);
+SQL>
+SQL>  -- Create a tuning task for a sql_id
+SQL> exec  :stmt_task := DBMS_SQLTUNE.CREATE_TUNING_TASK( sql_id => 'ba9uxvnyqzn89',time_limit => 1800, scope => DBMS_SQLTUNE.scope_comprehensive, task_name=>'eclubinter');
+
+ProcÚdure PL/SQL terminÚe avec succÞs.
+
+EcoulÚ : 00 :00 :00.34
+SQL>
+SQL> select :stmt_task from dual;
+
+:STMT_TASK
+--------------------------------------------------------------------------------
+eclubinter
+
+EcoulÚ : 00 :00 :00.00
+SQL> exec DBMS_SQLTUNE.EXECUTE_TUNING_TASK( task_name => :stmt_task );
+^C
+C:\Users\bip1\tune-master>
+C:\Users\bip1\tune-master>
+C:\Users\bip1\tune-master>
+C:\Users\bip1\tune-master>sqlplus bip/Koek1081@orlsol08
+
+SQL*Plus: Release 12.1.0.2.0 Production on Mar. Mai 29 09:21:19 2018
+
+Copyright (c) 1982, 2017, Oracle.  All rights reserved.
+
+Heure de la derniÞre connexion rÚussie : Mar. Mai   29 2018 09:20:07 +02:00
+
+ConnectÚ Ó :
+Oracle Database 12c Enterprise Edition Release 12.1.0.2.0 - 64bit Production
+With the Partitioning, OLAP, Advanced Analytics and Real Application Testing options
+
+SQL> exec DBMS_SQLTUNE.DROP_TUNING_TASK('eclubinter');
+
+ProcÚdure PL/SQL terminÚe avec succÞs.
+
+SQL> @eclubinter_tuning
+SQL> set serveroutput on
+SQL>
+SQL> variable stmt_task VARCHAR2(64);
+SQL>
+SQL>  -- Create a tuning task for a sql_id
+SQL> exec  :stmt_task := DBMS_SQLTUNE.CREATE_TUNING_TASK( sql_id => 'ba9uxvnyqzn89',time_limit => 1800, scope => DBMS_SQLTUNE.scope_comprehensive, task_name=>'eclubinter');
+
+ProcÚdure PL/SQL terminÚe avec succÞs.
+
+EcoulÚ : 00 :00 :00.05
+SQL>
+SQL> select :stmt_task from dual;
+
+:STMT_TASK
+--------------------------------------------------------------------------------
+eclubinter
+
+EcoulÚ : 00 :00 :00.00
+SQL>
+SQL> exec DBMS_SQLTUNE.EXECUTE_TUNING_TASK( task_name => :stmt_task );
+
+ProcÚdure PL/SQL terminÚe avec succÞs.
+
+EcoulÚ : 00 :32 :06.62
+SQL>
+
+
+SET LONG 1000
+SET LONGCHUNKSIZE 1000
+SET LINESIZE 100
+SELECT DBMS_SQLTUNE.REPORT_TUNING_TASK('eclubinter'  , 'TEXT', 'TYPICAL', 'ALL')
+FROM DUAL;
