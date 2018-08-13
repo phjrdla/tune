@@ -1,15 +1,15 @@
+
 -- SQL Tuning Advisor
-variable sts_task datatype varchar2(80);
+variable sts_task datatype varchar2(30);
 
 set serveroutput on
 declare
-sts_task VARCHAR2(80);
+sts_task VARCHAR2(64);
 BEGIN
   -- Create a tuning task, sort on elapsed time
-  sts_task := DBMS_SQLTUNE.CREATE_TUNING_TASK( sql_id => 'd312jzrr300hp' 
-                                              ,time_limit => 7200
-											  ,scope => DBMS_SQLTUNE.scope_comprehensive
-                                              ,description => 'tune query on orlsol08');
+  sts_task := DBMS_SQLTUNE.CREATE_TUNING_TASK( sql_id => 'akk1nhg78ah97' 
+                                              ,time_limit => 900
+                                              ,description => 'tune query on orlsol05');
                                               
   DBMS_SQLTUNE.EXECUTE_TUNING_TASK( task_name => sts_task );
   dbms_Output.put_line(sts_task);
@@ -26,14 +26,15 @@ FROM DBA_ADVISOR_LOG
 where task_name like 'TASK%' order by 1;
 
 rem Résultats de la tache de Tuning avec recommendations
-SET LONG 1000000
-SET LONGCHUNKSIZE 1000
-SET LINESIZE 100
-SELECT DBMS_SQLTUNE.REPORT_TUNING_TASK(upper('TASK_5399')  , 'TEXT', 'TYPICAL', 'ALL')
+SET LONG 10000000
+SET LONGCHUNKSIZE 10000
+SET LINESIZE 250
+set pagesize 500
+SELECT DBMS_SQLTUNE.REPORT_TUNING_TASK(upper('TASK_10577')  , 'TEXT', 'TYPICAL', 'ALL')
 FROM DUAL;
 
 rem Scripts pour implémenter les recommandations
-SELECT dbms_sqltune.script_tuning_task(upper('&taskname'), 'ALL') FROM dual;
+SELECT dbms_sqltune.script_tuning_task(upper('TASK_4908'), 'ALL') FROM dual;
 
 SELECT TASK_NAME
 FROM user_ADVISOR_LOG

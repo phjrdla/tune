@@ -6,7 +6,7 @@ sts_task VARCHAR2(64);
 
 BEGIN
   -- Create a tuning task, sort on elapsed time
-  sts_task := DBMS_SQLTUNE.CREATE_TUNING_TASK( sqlset_name => 'STS02' 
+  sts_task := DBMS_SQLTUNE.CREATE_TUNING_TASK( sqlset_name => 'STS22' 
                                               ,rank1 => 'ELAPSED_TIME'
                                               ,time_limit => 7200
 											  ,scope => DBMS_SQLTUNE.scope_comprehensive
@@ -21,6 +21,7 @@ print sts_task
 
 select :sts_task from dual;
 
+exit
 SELECT TASK_NAME
 FROM DBA_ADVISOR_LOG
 where task_name like 'TASK%' order by 1;
@@ -29,11 +30,11 @@ rem Résultats de la tache de Tuning avec recommendations
 SET LONG 10000000
 SET LONGCHUNKSIZE 1000
 SET LINESIZE 100
-SELECT DBMS_SQLTUNE.REPORT_TUNING_TASK('&taskname'  , 'TEXT', 'TYPICAL', 'ALL')
+SELECT DBMS_SQLTUNE.REPORT_TUNING_TASK('TASK_5269'  , 'TEXT', 'TYPICAL', 'ALL')
 FROM DUAL;
 
 rem Scripts pour implémenter les recommandations
-SELECT dbms_sqltune.script_tuning_task('TASK_13100', 'ALL') FROM dual;
+SELECT dbms_sqltune.script_tuning_task('TASK_4907', 'ALL') FROM dual;
 
 
 

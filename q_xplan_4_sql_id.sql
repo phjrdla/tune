@@ -4,5 +4,5 @@ set trimspool on
 set long 10000
 
 select * 
-  from table ( dbms_xplan.display_cursor('&sql_id',0) )
+  from table ( dbms_xplan.display_cursor('&sql_id', null, 'ALLSTATS LAST') )
 /

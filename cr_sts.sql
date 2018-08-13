@@ -1,10 +1,10 @@
 -- Drop the sqlset.
-EXEC DBMS_SQLTUNE.DROP_SQLSET ('STS02');
+EXEC DBMS_SQLTUNE.DROP_SQLSET ('STS22');
 
 -- Create SQL Tuning Set
 BEGIN
 DBMS_SQLTUNE.CREATE_SQLSET(
-sqlset_name => 'STS02',
+sqlset_name => 'STS22',
 description => 'To investigate SOLIFE long query');
 END;
 /
@@ -17,7 +17,7 @@ BEGIN
     SELECT value(P)
       FROM table(DBMS_SQLTUNE.SELECT_CURSOR_CACHE('parsing_schema_name <> ''SYS'' AND elapsed_time > 1000000000')) P;
     -- Process 
-    DBMS_SQLTUNE.LOAD_SQLSET(sqlset_name => 'STS02', populate_cursor => cur);
+    DBMS_SQLTUNE.LOAD_SQLSET(sqlset_name => 'STS22', populate_cursor => cur);
   CLOSE cur;
 END;
 /
