@@ -6,9 +6,9 @@ sts_task VARCHAR2(64);
 
 BEGIN
   -- Create a tuning task, sort on elapsed time
-  sts_task := DBMS_SQLTUNE.CREATE_TUNING_TASK( sqlset_name => 'STS22' 
+  sts_task := DBMS_SQLTUNE.CREATE_TUNING_TASK( sqlset_name => 'STS25' 
                                               ,rank1 => 'ELAPSED_TIME'
-                                              ,time_limit => 7200
+                                              ,time_limit => 900
 											  ,scope => DBMS_SQLTUNE.scope_comprehensive
                                               ,description => 'tune my workload ordered by elapsed time');
                                               
@@ -30,11 +30,11 @@ rem Résultats de la tache de Tuning avec recommendations
 SET LONG 10000000
 SET LONGCHUNKSIZE 1000
 SET LINESIZE 100
-SELECT DBMS_SQLTUNE.REPORT_TUNING_TASK('TASK_5269'  , 'TEXT', 'TYPICAL', 'ALL')
+SELECT DBMS_SQLTUNE.REPORT_TUNING_TASK('TASK_9875'  , 'TEXT', 'TYPICAL', 'ALL')
 FROM DUAL;
 
 rem Scripts pour implémenter les recommandations
-SELECT dbms_sqltune.script_tuning_task('TASK_4907', 'ALL') FROM dual;
+SELECT dbms_sqltune.script_tuning_task('TASK_9856', 'ALL') FROM dual;
 
 
 
